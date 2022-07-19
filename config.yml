@@ -1,0 +1,51 @@
+# Add anchor to be referenced in different places to prevent repititions
+defaults: &default
+  # define the docker image to use to run the jobs
+  docker:
+    - image: circleci/node:13.8.0
+
+# define the circle ci version to use
+version: 2.1
+
+# define the different jobs to run
+jobs:
+  build:
+    <<: *default
+    steps:
+      - checkout
+      - run: npm i
+      - persist_to_workspace
+          root: ~/src
+          paths:
+            - /node_modules
+      - run: npm run lint
+    
+  
+  test:
+    <<: *default
+    steps:
+      - checkout
+      - attach_workspace
+          root: ~/src
+      - run: cd node_modules
+      - run: npm i
+      - run npm run test
+  
+  analyze:
+    <<: *default
+    steps:
+      - checkout
+      - run npm audit
+
+workflows:
+  my_workspaces:
+    jobs:
+      - build
+      - test:
+        requires: [build]
+      - analyze:
+        requires: [test]
+
+
+
+
