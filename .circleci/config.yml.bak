@@ -14,10 +14,6 @@ jobs:
     steps:
       - checkout
       - run: npm i
-      - persist_to_workspace
-          root: /src
-          paths:
-            - node_modules
       - run: npm run lint
     
   
@@ -25,9 +21,6 @@ jobs:
     <<: *default
     steps:
       - checkout
-      - attach_workspace
-          root: /src
-      - run: cd node_modules
       - run: npm i
       - run npm run test
   
